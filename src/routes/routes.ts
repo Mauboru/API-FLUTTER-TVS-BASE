@@ -16,14 +16,14 @@ router.get('/clientes/:id', ClienteController.GetClientById);
 
 //PRODUTOS
 // router.get('/produtos', ProdutoController.listarProdutos);
-// router.get('/produtos/:id', ProdutoController.getProdutoById);
+router.get('/produtos/:id', ProdutoController.getProdutoById);
 // router.post('/incluirProduto', ProdutoController.incluirProduto);
 // router.put('/atualizarProduto/:id', ProdutoController.atualizarProduto);
 // router.delete('/excluirProduto/:id', ProdutoController.excluirProduto);
 
 //PEDIDOS
 // router.get('/Pedidos', PedidoController.listarPedidos);
-router.get('/pedidos/:id', PedidoController.getPedidoById);
+//router.get('/pedidos/:id', PedidoController.getPedidoById);
 // router.post('/incluirPedido', PedidoController.incluirPedido);
 // router.put('/atualizarPedido/:id', PedidoController.atualizarPedido);
 // router.delete('/excluirPedido/:id', PedidoController.excluirPedido);

@@ -18,4 +18,4 @@ export const GetClientById = async (req: Request, res: Response) => {
         console.error('Erro ao buscar cliente:', error);
         res.status(500).json({ message: 'Erro ao buscar cliente'});
     }
-};
+};  
