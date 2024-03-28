@@ -23,14 +23,14 @@ router.get('/produtos/:id', ProdutoController.getProdutoById);
 
 //PEDIDOS
 // router.get('/Pedidos', PedidoController.listarPedidos);
-//router.get('/pedidos/:id', PedidoController.getPedidoById);
+router.get('/pedidos/:id', PedidoController.getPedidoById);
 // router.post('/incluirPedido', PedidoController.incluirPedido);
 // router.put('/atualizarPedido/:id', PedidoController.atualizarPedido);
 // router.delete('/excluirPedido/:id', PedidoController.excluirPedido);
 
 // ITENS DO PEDIDO
 // router.get('/itensDoPedido', ItemDoPedidoController.listarItensDoPedido);
-// router.get('/itensDoPedido/:id', ItemDoPedidoController.getItemDoPedidoById);
+router.get('/itensDoPedido/:id', ItemDoPedidoController.getItemDoPedidoById);
 // router.post('/incluirItemDoPedido', ItemDoPedidoController.incluirItemDoPedido);
 // router.put('/atualizarItemDoPedido/:id', ItemDoPedidoController.atualizarItemDoPedido);
 // router.delete('/excluirItemDoPedido/:id', ItemDoPedidoController.excluirItemDoPedido);

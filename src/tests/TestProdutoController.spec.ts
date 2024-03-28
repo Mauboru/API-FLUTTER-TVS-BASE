@@ -1,7 +1,6 @@
 const request = require('supertest');
 import * as server from '../server';
 const app = server.server;
-import { Request, Response } from 'express';
 
 describe('Teste da rota GetProdutoById', () => {
     it('deve retornar o produto correto quando o ID é válido', async () => {
