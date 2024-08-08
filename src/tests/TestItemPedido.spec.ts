@@ -46,6 +46,31 @@ describe("Teste da Rota getProdutoById", () => {
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("message", "Produto não encontrado");
   });
+
+  it("Deve retornar o item do pedido com informações do cliente", async () => {
+
+  });
+
+  it("Deve verificar se no retorno da rota tem informações do pedido e do e do produto", async () => {
+
+  });
+
+  it("Deve retornar 404 se o item do pedido não for encontrado", async () => {
+
+  });
+
+  it("Deve retornar o item do pedido em menos de 200ms", async () => {
+    const start = Date.now();
+    const response = await request(app).get("/itensDoPedido");
+    const duration = Date.now() - start;
+
+    expect(response.status).toBe(200);
+    expect(duration).toBeLessThan(200);
+  });
+
+  it("Deve retornar 400 se o ID não for um número", async () => {
+
+  });
 });
 
 describe("Teste da Rota listarProdutos", () => {
