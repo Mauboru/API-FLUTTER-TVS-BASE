@@ -3,60 +3,61 @@ import * as server from "../server";
 import { app } from "../server"; // Certifique-se de que o caminho está correto
 import { Request, Response } from "express";
 import { Produto } from "../models/Produto";
+import { ItemDoPedido } from "../models/ItemDoPedido";
 
-describe("Teste da Rota incluirProduto", () => {
-  let produtoId: number;
+describe("Teste da Rota incluirItemDoPedido", () => {
+  let itemDoPedidoId: number;
 
-  it("Deve incluir um novo produto com sucesso", async () => {
-    const novoProduto = {
-      descricao: "Novo Produto"
+  it("Deve incluir um novo item do pedido com sucesso", async () => {
+    const novoItemDoPedido = {
+      id_pedido: 112,
+      id_produto: 111,
+      qtdade: 10
     };
 
-    const response = await request(app).post("/incluirProduto").send(novoProduto);
+    const response = await request(app).post("/incluirItemDoPedido").send(novoItemDoPedido);
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("id");
-    expect(response.body.descricao).toBe(novoProduto.descricao);
+    expect(response.body.id_pedido).toBe(novoItemDoPedido.id_pedido);
+    expect(response.body.id_produto).toBe(novoItemDoPedido.id_produto);
 
-    produtoId = response.body.id; // Armazena o ID do produto recém-criado para limpeza posterior
-  });
-
-  afterAll(async () => {
-    // Remove o produto criado no teste
-    if (produtoId) {
-      await Produto.destroy({ where: { id: produtoId } });
-    }
+    itemDoPedidoId = response.body.id;
   });
 });
 
-describe("Teste da Rota getProdutoById", () => {
-  it("Deve retornar o produto correto quando o id é válido", async () => {
-    const idProduto = 1; // Supondo que este seja um ID válido existente no seu banco de dados
-    const response = await request(app).get(`/produtos/${idProduto}`);
+describe("Teste da Rota GetItemDoPedidoById", () => {
+  it("Deve retornar o item do pedido correto quando o id é valido", async () => {
+    const idItemDoPedido = 109;
+    const response = await request(app).get(`/itensDoPedido/${idItemDoPedido}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("id", idProduto);
+    expect(response.body).toHaveProperty("itemDoPedido.id", idItemDoPedido);
   });
 
-  it("Deve retornar um status 404 quando o Id do produto não existe", async () => {
-    const idProduto = 999;
+  it("Deve retornar um status 404 quando o Id do item do pedido nao existe", async () => {
+    const idItemDoPedido = 999;
 
-    const response = await request(app).get(`/produtos/${idProduto}`);
+    const response = await request(app).get(`/itensDoPedido/${idItemDoPedido}`);
 
     expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("message", "Produto não encontrado");
+    expect(response.body).toHaveProperty("message", "Item do Pedido não encontrado");
   });
 
-  it("Deve retornar o item do pedido com informações do cliente", async () => {
+  // it("Deve retornar o item do pedido com informações do cliente", async () => {
 
-  });
+  // });
 
-  it("Deve verificar se no retorno da rota tem informações do pedido e do e do produto", async () => {
+  // it("Deve verificar se no retorno da rota tem informações do pedido e do e do produto", async () => {
 
-  });
+  // });
 
   it("Deve retornar 404 se o item do pedido não for encontrado", async () => {
+    const id = 1;
+    const response = await request(app).get(`/itensDoPedido/${id}`);
 
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Item do Pedido não encontrado");
   });
 
   it("Deve retornar o item do pedido em menos de 200ms", async () => {
@@ -69,89 +70,131 @@ describe("Teste da Rota getProdutoById", () => {
   });
 
   it("Deve retornar 400 se o ID não for um número", async () => {
+    const id = "A";
+    const response = await request(app).get(`/itensDoPedido/${id}`);
 
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("message", "Erro ID não é um número");
   });
 });
 
-describe("Teste da Rota listarProdutos", () => {
-  it("Deve retornar uma lista de produtos", async () => {
-    const response = await request(app).get("/produtos");
+describe("Teste da Rota listarItensDoPedidos", () => {
+  it("Deve retornar uma lista de itens dos pedidos", async () => {
+    const response = await request(app).get("/itensDoPedido");
 
     expect(response.status).toBe(200);
-    expect(response.body.produtos).toBeInstanceOf(Array);
+    expect(response.body.itensDoPedido).toBeInstanceOf(Array);
   });
 
-  it("Deve retornar a lista de produtos dentro de um tempo aceitável", async () => {
+  it("Deve retornar a lista de itens dos pedidos dentro de um tempo aceitavel", async () => {
     const start = Date.now();
-    const response = await request(app).get("/produtos");
+    const response = await request(app).get("/itensDoPedido");
     const duration = Date.now() - start;
 
     expect(response.status).toBe(200);
-    expect(duration).toBeLessThan(100); // Verifica se a resposta é retornada em menos de 100ms
+    expect(duration).toBeLessThan(200);
   });
 });
 
-describe("Teste da Rota excluirProduto", () => {
+describe("Teste da Rota excluirItemDoPedido", () => {
   beforeAll(async () => {
-    // Cria um produto com um ID único para o teste de exclusão
-    await Produto.create({ id: 99, descricao: "Produto Teste" });
+    await ItemDoPedido.create({ id: 99, id_pedido: "112", id_produto: "111", qtdade: 1});
   });
 
   afterAll(async () => {
-    // Limpa o banco de dados após os testes
-    await Produto.destroy({ where: { id: 99 } });
+    await ItemDoPedido.destroy({ where: { id: 99 } });
   });
 
-  it("Deve excluir um produto existente", async () => {
-    // Faz a requisição para excluir o produto com ID 99
-    const response = await request(app).delete("/excluirProduto/99");
+  it("Deve excluir um item do pedido existente", async () => {
+    const response = await request(app).delete("/excluirItemDoPedido/99");
 
-    // Verifica se a resposta da API está correta
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("message", "Produto excluído com sucesso");
+    expect(response.body).toHaveProperty("message", "Item do Pedido excluído com sucesso");
 
-    // Verifica se o produto foi realmente excluído
-    const produtoExcluido = await Produto.findByPk(99);
-    expect(produtoExcluido).toBeNull(); // Deve retornar null se o produto foi excluído
+    const itemDoPedidoExcluido = await ItemDoPedido.findByPk(99);
+    expect(itemDoPedidoExcluido).toBeNull();
   });
 });
 
-describe("Teste da Rota atualizarProduto", () => {
+describe("Teste da Rota atualizarItemDoPedido", () => {
+  let itemDoPedidoId: number;
+  let itemDoPedidoExistenteId: number;
+
+  beforeAll(async () => {
+    const itemDoPedido = await ItemDoPedido.create({
+      id_pedido: itemDoPedidoId, 
+      id_produto: itemDoPedidoExistenteId, 
+      qtdade: 10
+    });
+
+    itemDoPedidoExistenteId = itemDoPedido.id;
+
+    const itemDoPedidoParaAtualizar = await ItemDoPedido.create({
+      id_pedido: "5", 
+      id_produto: "115", 
+      qtdade: 10
+    });
+    itemDoPedidoId = itemDoPedidoParaAtualizar.id;
+  });
+
+  afterAll(async () => {
+    await ItemDoPedido.destroy({ where: { id: [itemDoPedidoId, itemDoPedidoExistenteId] } });
+  });
+
+  it("Deve atualizar um item do pedido com sucesso", async () => {
+    const itemDoPedidoAtualizado = {
+      id_pedido: 5, 
+      id_produto: 115, 
+      qtdade: 30
+    };
+
+    const response = await request(app).put(`/atualizarItemDoPedido/${itemDoPedidoId}`).send(itemDoPedidoAtualizado);
+
+    expect(response.status).toBe(200);
+    expect(response.body.id_pedido).toBe(itemDoPedidoAtualizado.id_pedido);
+    expect(response.body.id_produto).toBe(itemDoPedidoAtualizado.id_produto);
+    expect(response.body.qtdade).toBe(itemDoPedidoAtualizado.qtdade);
+  });
+
+  it("Deve retornar erro ao tentar atualizar pedido inexistente", async () => {
+    const itemDoPedidoInexistenteId = 10000000;
+    const itemDoPedidoAtualizado = {
+      id_pedido: "112", 
+      id_produto: "111", 
+      qtdade: 30
+    };
+
+    const response = await request(app).put(`/atualizarPedido/${itemDoPedidoInexistenteId}`).send(itemDoPedidoAtualizado);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message", "Item do Pedido não encontrado");
+  });
+});
+
+describe("Teste da Rota excluirItemDoPedido", () => {
+  let pedidoId: number;
   let produtoId: number;
 
   beforeAll(async () => {
-    // Cria um produto para ser atualizado
-    const produto = await Produto.create({
-      descricao: "Produto para Atualizar"
+    const itemDoPedido = await ItemDoPedido.create({
+      id: 99,
+      id_pedido: pedidoId, 
+      id_produto: produtoId, 
+      qtdade: 10
     });
-    produtoId = produto.id;
+  });
+  
+  afterAll(async () => {
+    await ItemDoPedido.destroy({ where: { id: 99 } });
   });
 
-  it("Deve atualizar um produto com sucesso", async () => {
-    const produtoAtualizado = {
-      descricao: "Produto Atualizado"
-    };
-
-    const response = await request(app).put(`/atualizarProduto/${produtoId}`).send(produtoAtualizado);
+  it("Deve excluir um produto existente", async () => {
+    const response = await request(app).delete("/excluirItemDoPedido/99");
 
     expect(response.status).toBe(200);
-    expect(response.body.descricao).toBe(produtoAtualizado.descricao);
-  });
+    expect(response.body).toHaveProperty("message", "Item do Pedido excluído com sucesso");
 
-  it("Deve retornar erro ao tentar atualizar produto inexistente", async () => {
-    const produtoInexistenteId = 999999;
-    const produtoAtualizado = {
-      descricao: "Produto Inexistente"
-    };
-
-    const response = await request(app).put(`/atualizarProduto/${produtoInexistenteId}`).send(produtoAtualizado);
-
-    expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("message", "Produto não encontrado");
-  });
-
-  afterAll(async () => {
-    // Limpeza dos produtos criados
-    await Produto.destroy({ where: { id: produtoId } });
+    const itemdopedidoExcluido = await ItemDoPedido.findByPk(99);
+    expect(itemdopedidoExcluido).toBeNull(); 
   });
 });
