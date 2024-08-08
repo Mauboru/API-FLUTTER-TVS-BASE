@@ -54,9 +54,15 @@ describe("Teste da Rota GetItemDoPedidoById", () => {
     expect(response.body.itemDoPedido.pedido.cliente).toHaveProperty("sobrenome");
   });
   
-  // it("Deve verificar se no retorno da rota tem informações do pedido e do e do produto", async () => {
-
-  // });
+  it("Deve verificar se no retorno da rota tem informações do pedido e do e do produto", async () => {
+    const idItemDoPedido = 109;
+    const response = await request(app).get(`/itensDoPedido/${idItemDoPedido}`);
+  
+    expect(response.status).toBe(200);
+    expect(response.body.itemDoPedido.pedido).toHaveProperty("cliente");
+    expect(response.body.itemDoPedido.pedido).toHaveProperty("data");
+    expect(response.body.itemDoPedido.produto).toHaveProperty("descricao"); 
+  });
 
   it("Deve retornar 404 se o item do pedido não for encontrado", async () => {
     const id = 1;
